@@ -33,7 +33,9 @@ def set_teardown_script(script: str | None, env: dict[str, str] | None = None) -
 _orig_collect_artifacts = SingleStepTrial._collect_artifacts
 
 
-async def _collect_artifacts_with_teardown(self: SingleStepTrial) -> None:
+async def _collect_artifacts_with_teardown(
+    self: SingleStepTrial, *args, **kwargs
+) -> None:
     if not self._are_artifacts_collected and _TEARDOWN_SCRIPT:
         try:
             result = await self.agent_environment.exec(
@@ -47,7 +49,7 @@ async def _collect_artifacts_with_teardown(self: SingleStepTrial) -> None:
         except Exception as exc:
             # Don't let a teardown crash prevent artifact collection.
             self.logger.warning(f"Integration teardown script raised: {exc}")
-    await _orig_collect_artifacts(self)
+    await _orig_collect_artifacts(self, *args, **kwargs)
 
 
 SingleStepTrial._collect_artifacts = _collect_artifacts_with_teardown

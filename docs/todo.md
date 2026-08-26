@@ -16,15 +16,15 @@ Harbor's task config accepts free-form `[metadata]`. Computed post-hoc in `src/c
 
 Opencode replaces large tool outputs with a stub in the session log ("...output truncated... Full output saved to: /root/.local/share/opencode/tool-output/..."), and the ATIF observation records the stub. `connector_output_chars` therefore measures what reached the model context (arguably the more relevant number) but undercounts what the surface actually returned; cli/mcpc bash outputs are truncated most often, MCP results typically pass through whole. If we ever need the raw size, the full outputs sit in the sandbox under opencode's tool-output dir and would have to be downloaded as artifacts before teardown. Detect the stub marker in metrics.py and flag the call (e.g. `truncated: true` in per_call) as a first step.
 
-## Codex trajectory: no per-step token metrics (Harbor gap)
+## Codex trajectory: no per-step token metrics (FIXED upstream in harbor 0.22.0)
 
-Harbor's codex adapter converts the codex session log to ATIF with `metrics: null` on every step; only `final_metrics` carries token totals (the per-turn data exists at the source, see `last_token_usage` surviving in `final_metrics.extra`). Consequences: `prompt_baseline_tokens` is None for codex and the dashboard's cumulative-token timeline is empty for codex trials. Trial-level totals (tokens, cost) are unaffected. Fix upstream in harbor's codex trajectory conversion rather than in `_patches/`.
+**Status (2026-08-26):** Fixed by the harbor 0.13.1 -> 0.22.0 upgrade. The codex adapter now attaches per-API-call metrics to steps natively; `_patches/codex_step_metrics.py` deleted. Verified on a live codex+mcp trial: sum(step prompt_tokens) == final_metrics total, `prompt_baseline_tokens` populated.
 
-## Codex agent: MCP env not propagated (Harbor gap)
+## Codex agent: MCP env not propagated (Harbor gap, still open in 0.22.0)
 
-Harbor's codex agent (`harbor/agents/installed/codex.py`, `_build_register_mcp_servers_command`) writes only `command`/`url` to `$CODEX_HOME/config.toml`, never `env`. Codex CLI does support `env = { KEY = "value" }` per [codex config reference](https://developers.openai.com/codex/config-reference), so MCP child processes never receive secrets we declared via task `[environment.env]`.
+Harbor's codex agent (`harbor/agents/installed/codex.py`, `_build_effective_config`) writes only `command`/`args`/`url` per `[mcp_servers.*]` table in `$CODEX_HOME/config.toml`, never `env` (`MCPServerConfig` has no env field). Codex CLI does support `env = { KEY = "value" }` per [codex config reference](https://developers.openai.com/codex/config-reference), so MCP child processes never receive secrets we declared via task `[environment.env]`.
 
-Workaround: `src/connector_evals/_patches/codex_mcp_env.py` monkey-patches `_build_register_mcp_servers_command` to emit an `env = { KEY = "${KEY}" }` block per MCP server, sourced from a `MCP_SERVER_ENV` mapping. Heredoc with unquoted delimiter so shell substitution happens at exec time in docker (same pattern codex.py:766-770 uses for `OPENAI_BASE_URL`). Remove patch and import in `src/connector_evals/__init__.py` once harbor lands the fix. Upstream PR still TODO.
+Workaround: `src/connector_evals/_patches/codex_mcp_env.py` monkey-patches `_build_effective_config` to inject an `env` dict per MCP server, sourced from a `MCP_SERVER_ENV` mapping with values resolved via `Agent._get_env` (rewritten for 0.22.0; pre-0.22 it patched the removed `_build_register_mcp_servers_command` heredoc path). Remove patch and import in `src/connector_evals/__init__.py` once harbor lands the fix. Upstream PR still TODO.
 
 ## Codex agent: MCP tool-name prefix stripped (verifier convention gap)
 
