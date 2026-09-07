@@ -37,7 +37,7 @@ https://www.harborframework.com/docs/core-concepts):
 `connector-evals` adds three project-specific pieces on top:
 
 - **app** - third-party service the agent talks to (`apify`, `github`, `linear`, `notion`, ...).
-- **connector** - how the agent reaches it: `mcp`, `cli`, `mcpc`, or `cli+skill`. One connector per run by default; `app_connectors:` for hybrid.
+- **connector** - how the agent reaches it: `mcp`, `cli`, `mcpc`, `mcporter`, `mcp-cli`, `browser` (github only), or `cli+skill`. One connector per run by default; `app_connectors:` for hybrid.
 - **cell** - one (app, connector) pair on disk: `apps/<app>/<connector>/{cell.yaml, instruction.md, [setup.sh], [teardown.sh], [skills/]}`.
 
 Workflow:

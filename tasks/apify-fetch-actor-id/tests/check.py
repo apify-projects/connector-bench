@@ -62,6 +62,10 @@ def _matches_connector(tc: dict, connector: str) -> bool:
         return name in SHELL_TOOLS and cmd.startswith("apify ")
     if connector == "mcpc":
         return name in SHELL_TOOLS and cmd.startswith("mcpc ")
+    if connector == "mcporter":
+        return name in SHELL_TOOLS and cmd.startswith("mcporter ")
+    if connector == "mcp-cli":
+        return name in SHELL_TOOLS and cmd.startswith("mcp-cli ")
     return False
 
 

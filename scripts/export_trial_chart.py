@@ -38,7 +38,7 @@ _spec.loader.exec_module(metrics_mod)
 # Palette matches the reference mockup (teal / orange / slate). Extend if more
 # connectors show up in one chart.
 DEFAULT_PALETTE = ["#2ea0a1", "#c96a2b", "#5a6a7a", "#8b6ab8", "#b8a06a"]
-DEFAULT_ORDER = ["mcp", "mcpc", "cli", "cli+skill"]
+DEFAULT_ORDER = ["mcp", "mcpc", "mcporter", "mcp-cli", "cli", "cli+skill"]
 
 
 def read_trajectory(traj_path: Path, model_name: str | None) -> tuple[list[float], list[int], list[float]]:
@@ -132,8 +132,10 @@ def _connector_from(cfg: dict, job_name: str) -> str:
     single = env.get("CONNECTOR_EVALS_CONNECTOR") or env.get("EXPECTED_CONNECTOR")
     if single:
         return _norm(single)
+    if "mcp-cli" in job_name:  # hyphenated name never survives the "-" split
+        return "mcp-cli"
     for tok in job_name.split("-"):
-        if tok in {"mcp", "mcpc", "cli", "skill", "cli+skill"}:
+        if tok in {"mcp", "mcpc", "mcporter", "cli", "skill", "cli+skill"}:
             return _norm(tok)
     return "?"
 
@@ -316,7 +318,7 @@ def main() -> None:
     ap.add_argument("--color", action="append", default=[],
                     help="per-connector color override, key=hex (repeatable, e.g. mcp=#5a6a7a)")
     ap.add_argument("--order", default=None,
-                    help="comma-separated connector draw order; default = mcp,mcpc,cli,cli+skill")
+                    help="comma-separated connector draw order; default = mcp,mcpc,mcporter,mcp-cli,cli,cli+skill")
     ap.add_argument("--out", type=Path, default=Path("chart.svg"))
     ap.add_argument("--width", type=int, default=1600)
     ap.add_argument("--height", type=int, default=900)

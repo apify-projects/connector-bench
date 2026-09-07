@@ -41,6 +41,35 @@ class TestClassifyCall:
         tc = _call("bash", command="mcpc apify tools")
         assert classify_call(tc, "apify", "mcpc") == "connector"
 
+    def test_mcporter_connector(self):
+        tc = _call("bash", command="mcporter call apify.fetch-actor-details actor=apify/web-scraper")
+        assert classify_call(tc, "apify", "mcporter") == "connector"
+        assert classify_call(tc, "apify", "cli") == "escape"
+
+    def test_mcp_cli_connector(self):
+        tc = _call("bash", command="mcp-cli tools --server apify")
+        assert classify_call(tc, "apify", "mcp-cli") == "connector"
+        assert classify_call(tc, "apify", "cli") == "escape"
+
+    def test_browser_connector_across_harnesses(self):
+        claude = _call("mcp__browser__browser_navigate", url="https://github.com/psf/requests/releases")
+        opencode = _call("browser_browser_navigate", url="https://github.com/psf/requests")
+        codex = _call("browser_navigate", url="https://github.com/psf/requests")
+        for tc in (claude, opencode, codex):
+            assert classify_call(tc, "github", "browser") == "connector"
+        # Non-navigation browser tools have no url arg.
+        click = _call("browser_click", element="Releases link", ref="e42")
+        assert classify_call(click, "github", "browser") == "connector"
+
+    def test_browser_navigate_to_api_host_is_escape(self):
+        tc = _call("browser_navigate", url="https://api.github.com/repos/psf/requests")
+        assert classify_call(tc, "github", "browser") == "escape"
+
+    def test_browser_vs_other_connectors(self):
+        assert classify_call(_call("bash", command="gh api user"), "github", "browser") == "escape"
+        nav = _call("browser_navigate", url="https://github.com/psf/requests")
+        assert classify_call(nav, "github", "cli") == "escape"
+
     def test_wrong_connector_is_escape(self):
         cli_in_mcp = _call("bash", command="apify actors ls")
         assert classify_call(cli_in_mcp, "apify", "mcp") == "escape"

@@ -53,6 +53,7 @@ GITHUB_MCP_TOOLS = {
 }
 
 MCP_NAME_PREFIXES = ("github_", "github-", "mcp__github__")
+BROWSER_TOOL_PREFIXES = ("mcp__browser__", "browser_", "browser-")
 # Shell tool names per harness: opencode "bash", claude-code "Bash" (lowercased
 # before comparison), codex "exec_command" (command in the "cmd" argument).
 SHELL_TOOLS = {"bash", "exec_command", "shell", "run_terminal_cmd", "local_shell"}
@@ -76,6 +77,15 @@ def _matches_connector(tc: dict, connector: str) -> bool:
         return name in SHELL_TOOLS and cmd.startswith("gh ")
     if connector == "mcpc":
         return name in SHELL_TOOLS and cmd.startswith("mcpc ")
+    if connector == "mcporter":
+        return name in SHELL_TOOLS and cmd.startswith("mcporter ")
+    if connector == "mcp-cli":
+        return name in SHELL_TOOLS and cmd.startswith("mcp-cli ")
+    if connector == "browser":
+        if not name.startswith(BROWSER_TOOL_PREFIXES):
+            return False
+        # api.github.com in the browser is API access, not UI use.
+        return "api.github.com" not in ((args.get("url") or ""))
     return False
 
 

@@ -85,6 +85,10 @@ def _matches(tc: dict, app: str, connector: str | None) -> bool:
         return name in SHELL_TOOLS and cmd.startswith(spec["cli_prefix"])
     if connector == "mcpc":
         return name in SHELL_TOOLS and cmd.startswith("mcpc ")
+    if connector == "mcporter":
+        return name in SHELL_TOOLS and cmd.startswith("mcporter ")
+    if connector == "mcp-cli":
+        return name in SHELL_TOOLS and cmd.startswith("mcp-cli ")
     return False
 
 

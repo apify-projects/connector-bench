@@ -75,7 +75,13 @@ APPS: dict[str, dict[str, Any]] = {
 }
 
 MCPC_PREFIXES = ("mcpc ",)
-CONNECTORS = ("mcp", "cli", "mcpc")
+MCPORTER_PREFIXES = ("mcporter ",)
+MCP_CLI_PREFIXES = ("mcp-cli ",)
+# Playwright MCP tool names all start with `browser_` and the server is named
+# `browser`, so: claude-code `mcp__browser__browser_navigate`, opencode
+# `browser_browser_navigate`, codex (prefix stripped) `browser_navigate`.
+BROWSER_TOOL_PREFIXES = ("mcp__browser__", "browser_", "browser-")
+CONNECTORS = ("mcp", "cli", "mcpc", "mcporter", "mcp-cli", "browser")
 
 SHELL_TOOLS = {"bash", "exec_command", "shell", "run_terminal_cmd", "local_shell"}
 # Harness-native HTTP fetchers that bypass the shell (opencode `webfetch`,
@@ -278,6 +284,12 @@ def matches_connector(tc: dict, app: str, connector: str) -> bool:
         if name.startswith(tuple(p.lower() for p in spec["mcp_name_prefixes"])):
             return True
         return _normalize_mcp_tool(name, app) in spec["mcp_tools"]
+    if connector == "browser":
+        if not name.startswith(BROWSER_TOOL_PREFIXES):
+            return False
+        # Navigating straight to the app's HTTP API is an escape, not UI use.
+        url = (tc.get("arguments") or {}).get("url") or ""
+        return not any(host in url for host in spec["api_hosts"])
     if name not in SHELL_TOOLS:
         return False
     cmd = _command(tc)
@@ -285,6 +297,10 @@ def matches_connector(tc: dict, app: str, connector: str) -> bool:
         return cmd.startswith(spec["cli_prefixes"])
     if connector == "mcpc":
         return cmd.startswith(MCPC_PREFIXES)
+    if connector == "mcporter":
+        return cmd.startswith(MCPORTER_PREFIXES)
+    if connector == "mcp-cli":
+        return cmd.startswith(MCP_CLI_PREFIXES)
     return False
 
 
@@ -305,8 +321,9 @@ def _is_api_escape(tc: dict, app: str) -> bool:
     - Shell tools (bash/exec_command/...): require BOTH an api-host substring
       AND a recognizable HTTP-issuing marker (curl, urllib, etc). The marker
       gate filters heredoc-pasted JSON that incidentally contains api host URLs.
-    - Webfetch-style tools (opencode `webfetch`, claude-code `WebFetch`): match
-      the `url` argument directly against the app's api hosts.
+    - Webfetch-style tools (opencode `webfetch`, claude-code `WebFetch`) and
+      browser MCP navigations: match the `url` argument directly against the
+      app's api hosts.
     """
     name = _name(tc)
     hosts = APPS[app]["api_hosts"]
@@ -315,7 +332,7 @@ def _is_api_escape(tc: dict, app: str) -> bool:
         if not any(host in cmd for host in hosts):
             return False
         return any(m in cmd for m in _HTTP_TOOL_MARKERS)
-    if name in WEBFETCH_TOOLS:
+    if name in WEBFETCH_TOOLS or name.startswith(BROWSER_TOOL_PREFIXES):
         url = (tc.get("arguments") or {}).get("url") or ""
         return any(host in url for host in hosts)
     return False
