@@ -36,6 +36,14 @@ this project compares:
 - **`browser`** - [playwright-mcp](https://github.com/microsoft/playwright-mcp) driving headless Chromium against the app's web UI, like a human would (github only for now).
 - **`cli+skill`** - the CLI plus an agent skill teaching its usage.
 
+Not every connector exists for every app.
+
+| app    | mcp | cli | api | mcpc | mcporter | mcp-cli | browser | cli+skill |
+|--------|:---:|:---:|:---:|:----:|:--------:|:-------:|:-------:|:---------:|
+| apify  | ✅  | ✅  | ✅  | ✅   | ✅       | ✅      | -       | ✅        |
+| github | ✅  | ✅  | ✅  | ✅   | ✅       | ✅      | ✅      | -         |
+| notion | ✅  | ✅  | -   | -    | -        | -       | -       | -         |
+
 ## Concepts
 
 Harbor primitives (full reference:
@@ -98,6 +106,14 @@ invoke the CLI via `uv run connector-evals`.
 Put keys in a `.env` in the directory you run from; `connector-evals run` auto-loads
 it (`--env-file` overrides). At minimum `OPENROUTER_API_KEY` plus the sandbox
 key (`E2B_API_KEY` by default).
+
+For notion tasks (Notion has no public API surface, so tasks read fixture
+pages seeded into your own workspace): create an internal integration at
+https://www.notion.so/profile/integrations, create an empty parent page and
+share it with the integration, set `NOTION_API_TOKEN` and
+`NOTION_PARENT_PAGE_ID` in `.env`, then seed once with
+`uv run connector-evals seed notion` (idempotent; rerun after fixture edits -
+trials fail fast with a reseed hint when the workspace is stale).
 
 ## Usage
 
