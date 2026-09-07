@@ -3,6 +3,7 @@ import typer
 from connector_evals.cli.dashboard import dashboard_command
 from connector_evals.cli.materialize import materialize_command
 from connector_evals.cli.run import run_command
+from connector_evals.cli.seed import seed_command
 
 app = typer.Typer(
     no_args_is_help=True,
@@ -24,3 +25,7 @@ app.command(
     name="dashboard",
     help="Launch the streamlit dashboard against a jobs dir.",
 )(dashboard_command)
+app.command(
+    name="seed",
+    help="Seed app fixtures into the user's workspace (notion only for now).",
+)(seed_command)

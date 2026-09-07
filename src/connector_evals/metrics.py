@@ -72,6 +72,28 @@ APPS: dict[str, dict[str, Any]] = {
         "cli_prefixes": ("gh ",),
         "api_hosts": ("api.github.com",),
     },
+    "notion": {
+        "mcp_name_prefixes": ("notion_", "notion-", "mcp__notion__"),
+        # codex-style stripped names (@notionhq/notion-mcp-server 2.x). Extend
+        # when surfacing new tools - mirrored in tasks/notion-*/tests/check.py.
+        "mcp_tools": {
+            "search",
+            "fetch",
+            "retrieve-a-page",
+            "retrieve-page-markdown",
+            "retrieve-a-block",
+            "retrieve-block-children",
+            "retrieve-a-database",
+            "retrieve-a-data-source",
+            "query-data-source",
+            "retrieve-comments",
+            "list-all-users",
+            "retrieve-a-user",
+            "retrieve-your-token-s-bot-user",
+        },
+        "cli_prefixes": ("ntn ",),
+        "api_hosts": ("api.notion.com",),
+    },
 }
 
 MCPC_PREFIXES = ("mcpc ",)

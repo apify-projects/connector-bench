@@ -1,0 +1,16 @@
+# Single binary verdict from a trajectory judge, same shape as the github
+# tasks. KNOWN FACTS come from src/connector_evals/notion_fixtures.py FIXTURES;
+# keep in sync when editing fixture content.
+#
+# Judge model must be litellm-mapped because atif-trajectory triggers
+# get_model_info to size the trajectory token budget; deepseek-v4-* are NOT
+# mapped yet, so use the newest mapped deepseek (v3.2).
+[judge]
+judge = "openrouter/deepseek/deepseek-v3.2"
+atif-trajectory = "/logs/agent/trajectory.json"
+mode = "individual"
+
+[[criterion]]
+name = "task_complete"
+description = """KNOWN FACTS: the Notion page 'Scraper Inventory' lists exactly 5 scrapers. Two have status deprecated: amazon-crawler (owner Bob) and jobs-radar (owner Dana).\n\nGrade PASS only if the agent actually executed Notion tool calls / commands to obtain the data AND reported the total of 5 scrapers AND named both deprecated scrapers with their owners. Grade FAIL if it hallucinated data without reading the page, misread the results, or gave a partial answer."""
+type = "binary"

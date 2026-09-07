@@ -1,4 +1,5 @@
 import asyncio
+import os
 from pathlib import Path
 from typing import Annotated
 
@@ -220,6 +221,14 @@ def run_command(
         )
         for c in app_names
     ]
+
+    if any(c.app == "notion" for c in cells):
+        # Notion cells reference ${NOTION_FIXTURES_HASH} in setup_env; their
+        # setup.sh aborts the trial when the workspace manifest doesn't match,
+        # so sweeps never grade against stale fixtures.
+        from connector_evals.notion_fixtures import fixtures_hash
+
+        os.environ["NOTION_FIXTURES_HASH"] = fixtures_hash()
 
     materialize_for_tasks(run_task_paths(run))
 

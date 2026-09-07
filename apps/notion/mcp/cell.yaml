@@ -1,0 +1,14 @@
+mcp_servers:
+  - name: notion
+    transport: stdio
+    command: /usr/local/bin/notion-mcp-proxy
+    args: []
+# Token is set only during setup.sh, which stashes it to /etc/notion-mcp.token
+# for the proxy to read; kept out of the container env so the agent can't
+# `echo $NOTION_API_TOKEN` it into the trajectory. Matches apps/apify/mcp/cell.yaml.
+# NOTION_FIXTURES_HASH is exported by the run CLI from
+# src/connector_evals/notion_fixtures.py for the staleness probe.
+setup_env:
+  NOTION_API_TOKEN: ${NOTION_API_TOKEN}
+  NOTION_PARENT_PAGE_ID: ${NOTION_PARENT_PAGE_ID}
+  NOTION_FIXTURES_HASH: ${NOTION_FIXTURES_HASH}

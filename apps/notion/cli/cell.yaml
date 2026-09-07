@@ -1,0 +1,10 @@
+# Unlike apify/gh there is no non-interactive persisted login (`ntn login`
+# opens a browser), so the token stays in the agent env: ntn reads
+# NOTION_API_TOKEN directly. Direct api.notion.com escapes are still caught by
+# the verifier's connector classification.
+environment_env:
+  NOTION_API_TOKEN: ${NOTION_API_TOKEN}
+setup_env:
+  NOTION_API_TOKEN: ${NOTION_API_TOKEN}
+  NOTION_PARENT_PAGE_ID: ${NOTION_PARENT_PAGE_ID}
+  NOTION_FIXTURES_HASH: ${NOTION_FIXTURES_HASH}
