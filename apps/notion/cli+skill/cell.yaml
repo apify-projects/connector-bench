@@ -1,4 +1,6 @@
 # See apps/notion/cli/cell.yaml (same CLI underneath, plus the skill).
+# skills/notion-cli is Notion's official skill, vendored verbatim (MIT) from
+# github.com/makenotion/skills @ 423af2b (2026-05-04).
 environment_env:
   NOTION_API_TOKEN: ${NOTION_API_TOKEN}
 setup_env:
