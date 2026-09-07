@@ -12,7 +12,7 @@ saves the full trajectory, so you can diagnose failures and iterate.
 
 **Features:**
 
-- 📊 Side-by-side comparison of tool access: **MCP / CLI / skill / [mcpc](https://github.com/apify/mcpc)**
+- 📊 Side-by-side comparison of tool access: **MCP / CLI / skill / [mcpc](https://github.com/apify/mcpc) / [mcporter](https://github.com/openclaw/mcporter) / [mcp-cli](https://github.com/IBM/mcp-cli) / browser**
 - 🤖 Multi-harness: **claude-code, codex, opencode**
 - 🧠 Multi-model via OpenRouter or direct-to-provider
 - 🔗 Cross-app tasks: one instruction can touch multiple apps at once (apify + github + ...)
