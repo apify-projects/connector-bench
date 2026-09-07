@@ -42,6 +42,7 @@ APPS = {
             "abort-actor-run",
         },
         "cli_prefix": "apify ",
+        "api_hosts": ("api.apify.com",),
     },
     "github": {
         "mcp_name_prefixes": ("github_", "github-", "mcp__github__"),
@@ -53,9 +54,16 @@ APPS = {
             "search-code", "search-repositories", "get-file-contents", "get-me",
         },
         "cli_prefix": "gh ",
+        "api_hosts": ("api.github.com",),
     },
 }
 SHELL_TOOLS = {"bash", "exec_command", "shell", "run_terminal_cmd", "local_shell"}
+WEBFETCH_TOOLS = {"webfetch", "web_fetch"}
+# HTTP-issuing markers gate the api match, same as metrics.py `_is_api_escape`.
+HTTP_MARKERS = (
+    "curl", "wget", "httpie", "xh ",
+    "urlopen", "urlretrieve", "requests.", "httpx", "aiohttp", "fetch(",
+)
 
 
 def _normalize_mcp_tool(name: str, app: str) -> str:
@@ -83,6 +91,13 @@ def _matches(tc: dict, app: str, connector: str | None) -> bool:
         return name in SHELL_TOOLS and cmd.startswith("mcporter ")
     if connector == "mcp-cli":
         return name in SHELL_TOOLS and cmd.startswith("mcp-cli ")
+    if connector == "api":
+        url = str(args.get("url") or "")
+        if name in WEBFETCH_TOOLS:
+            return any(h in url for h in spec["api_hosts"])
+        return name in SHELL_TOOLS and any(h in cmd for h in spec["api_hosts"]) and any(
+            m in cmd for m in HTTP_MARKERS
+        )
     return False
 
 

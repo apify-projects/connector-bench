@@ -17,7 +17,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 # Set by `connector-evals dashboard` so external projects can point at their own jobs dir.
 JOBS_DIR = Path(os.environ.get("CONNECTOR_EVALS_JOBS_DIR", REPO_ROOT / "jobs")).expanduser().resolve()
 # Fallback parse for jobs predating CONNECTOR_EVALS_CONNECTOR in verifier env.
-KNOWN_CONNECTORS = {"mcp", "cli", "skill", "cli+skill", "mcpc", "mcporter", "mcp-cli", "browser"}
+KNOWN_CONNECTORS = {"mcp", "cli", "skill", "cli+skill", "mcpc", "mcporter", "mcp-cli", "browser", "api"}
 GROUP_KEYS = ["trial", "job", "apps", "connector", "task", "agent", "model"]
 
 # Shared trajectory-metric logic (stdlib-only). Loaded by file path because the

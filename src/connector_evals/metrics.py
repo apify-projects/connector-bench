@@ -81,7 +81,7 @@ MCP_CLI_PREFIXES = ("mcp-cli ",)
 # `browser`, so: claude-code `mcp__browser__browser_navigate`, opencode
 # `browser_browser_navigate`, codex (prefix stripped) `browser_navigate`.
 BROWSER_TOOL_PREFIXES = ("mcp__browser__", "browser_", "browser-")
-CONNECTORS = ("mcp", "cli", "mcpc", "mcporter", "mcp-cli", "browser")
+CONNECTORS = ("mcp", "cli", "mcpc", "mcporter", "mcp-cli", "browser", "api")
 
 SHELL_TOOLS = {"bash", "exec_command", "shell", "run_terminal_cmd", "local_shell"}
 # Harness-native HTTP fetchers that bypass the shell (opencode `webfetch`,
@@ -290,6 +290,11 @@ def matches_connector(tc: dict, app: str, connector: str) -> bool:
         # Navigating straight to the app's HTTP API is an escape, not UI use.
         url = (tc.get("arguments") or {}).get("url") or ""
         return not any(host in url for host in spec["api_hosts"])
+    if connector == "api":
+        # Raw REST access is the expected surface here, so the api-escape
+        # predicate doubles as the connector match (it never fires as an
+        # escape for this connector: any call it matches already matched).
+        return _is_api_escape(tc, app)
     if name not in SHELL_TOOLS:
         return False
     cmd = _command(tc)

@@ -51,6 +51,13 @@ class TestClassifyCall:
         assert classify_call(tc, "apify", "mcp-cli") == "connector"
         assert classify_call(tc, "apify", "cli") == "escape"
 
+    def test_api_connector(self):
+        tc = _call("bash", command='curl -sS -H @/root/.api-headers/apify "https://api.apify.com/v2/acts/apify~web-scraper"')
+        assert classify_call(tc, "apify", "api") == "connector"
+        assert classify_call(tc, "apify", "cli") == "escape"
+        wf = _call("webfetch", url="https://api.github.com/repos/apify/crawlee")
+        assert classify_call(wf, "github", "api") == "connector"
+
     def test_browser_connector_across_harnesses(self):
         claude = _call("mcp__browser__browser_navigate", url="https://github.com/psf/requests/releases")
         opencode = _call("browser_browser_navigate", url="https://github.com/psf/requests")

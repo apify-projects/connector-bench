@@ -57,6 +57,12 @@ BROWSER_TOOL_PREFIXES = ("mcp__browser__", "browser_", "browser-")
 # Shell tool names per harness: opencode "bash", claude-code "Bash" (lowercased
 # before comparison), codex "exec_command" (command in the "cmd" argument).
 SHELL_TOOLS = {"bash", "exec_command", "shell", "run_terminal_cmd", "local_shell"}
+WEBFETCH_TOOLS = {"webfetch", "web_fetch"}
+# HTTP-issuing markers gate the api match, same as metrics.py `_is_api_escape`.
+HTTP_MARKERS = (
+    "curl", "wget", "httpie", "xh ",
+    "urlopen", "urlretrieve", "requests.", "httpx", "aiohttp", "fetch(",
+)
 
 
 def _normalize_mcp_tool(name: str) -> str:
@@ -81,6 +87,13 @@ def _matches_connector(tc: dict, connector: str) -> bool:
         return name in SHELL_TOOLS and cmd.startswith("mcporter ")
     if connector == "mcp-cli":
         return name in SHELL_TOOLS and cmd.startswith("mcp-cli ")
+    if connector == "api":
+        url = str(args.get("url") or "")
+        if name in WEBFETCH_TOOLS:
+            return "api.github.com" in url
+        return name in SHELL_TOOLS and "api.github.com" in cmd and any(
+            m in cmd for m in HTTP_MARKERS
+        )
     if connector == "browser":
         if not name.startswith(BROWSER_TOOL_PREFIXES):
             return False

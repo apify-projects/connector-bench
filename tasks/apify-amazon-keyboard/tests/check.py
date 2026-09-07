@@ -50,6 +50,12 @@ APIFY_MCP_TOOLS = {
 
 MCP_NAME_PREFIXES = ("apify_", "apify-", "mcp__apify__")
 SHELL_TOOLS = {"bash", "exec_command", "shell", "run_terminal_cmd", "local_shell"}
+WEBFETCH_TOOLS = {"webfetch", "web_fetch"}
+# HTTP-issuing markers gate the api match, same as metrics.py `_is_api_escape`.
+HTTP_MARKERS = (
+    "curl", "wget", "httpie", "xh ",
+    "urlopen", "urlretrieve", "requests.", "httpx", "aiohttp", "fetch(",
+)
 
 
 def _normalize_mcp_tool(name: str) -> str:
@@ -74,6 +80,13 @@ def _matches_connector(tc: dict, connector: str) -> bool:
         return name in SHELL_TOOLS and cmd.startswith("mcporter ")
     if connector == "mcp-cli":
         return name in SHELL_TOOLS and cmd.startswith("mcp-cli ")
+    if connector == "api":
+        url = str(args.get("url") or "")
+        if name in WEBFETCH_TOOLS:
+            return "api.apify.com" in url
+        return name in SHELL_TOOLS and "api.apify.com" in cmd and any(
+            m in cmd for m in HTTP_MARKERS
+        )
     return False
 
 
