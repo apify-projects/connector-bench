@@ -12,7 +12,7 @@ saves the full trajectory, so you can diagnose failures and iterate.
 
 **Features:**
 
-- 📊 Side-by-side comparison of tool access: **MCP / CLI / skill / [mcpc](https://github.com/apify/mcpc) / [mcporter](https://github.com/openclaw/mcporter) / [mcp-cli](https://github.com/IBM/mcp-cli) / browser**
+- 📊 Side-by-side comparison of tool access: **MCP / CLI / API / browser / skill / MCP-CLI bridges** - see [Connectors](#connectors)
 - 🤖 Multi-harness: **claude-code, codex, opencode**
 - 🧠 Multi-model via OpenRouter or direct-to-provider
 - 🔗 Cross-app tasks: one instruction can touch multiple apps at once (apify + github + ...)
@@ -21,6 +21,20 @@ saves the full trajectory, so you can diagnose failures and iterate.
 - ☁️ Cloud sandboxes (E2B, Daytona, ...) or local Docker
 - 🧩 Extensible: add apps or tasks by dropping a directory, no code changes
 - 🐚 Built on [Harbor](https://www.harborframework.com/docs)
+
+## Connectors
+
+A **connector** is the surface through which the agent reaches an app - the axis
+this project compares:
+
+- **`mcp`** - the app's MCP server, wired into the harness natively.
+- **`cli`** - the app's official CLI (`gh`, `apify`, ...) over the shell.
+- **`api`** - the app's raw REST API via `curl`, auth header pre-provisioned.
+- **`mcpc`** - the MCP server driven from the shell via [mcpc](https://github.com/apify/mcpc).
+- **`mcporter`** - same idea via [mcporter](https://github.com/openclaw/mcporter).
+- **`mcp-cli`** - same idea via [IBM mcp-cli](https://github.com/IBM/mcp-cli).
+- **`browser`** - [playwright-mcp](https://github.com/microsoft/playwright-mcp) driving headless Chromium against the app's web UI, like a human would (github only for now).
+- **`cli+skill`** - the CLI plus an agent skill teaching its usage.
 
 ## Concepts
 
@@ -37,7 +51,7 @@ https://www.harborframework.com/docs/core-concepts):
 `connector-evals` adds three project-specific pieces on top:
 
 - **app** - third-party service the agent talks to (`apify`, `github`, `linear`, `notion`, ...).
-- **connector** - how the agent reaches it: `mcp`, `cli`, `mcpc`, `mcporter`, `mcp-cli`, `browser` (github only), or `cli+skill`. One connector per run by default; `app_connectors:` for hybrid.
+- **connector** - how the agent reaches it; see [Connectors](#connectors). One connector per run by default; `app_connectors:` for hybrid.
 - **cell** - one (app, connector) pair on disk: `apps/<app>/<connector>/{cell.yaml, instruction.md, [setup.sh], [teardown.sh], [skills/]}`.
 
 Workflow:
