@@ -6,12 +6,17 @@
 #
 # Usage: mcpc-probe --name LABEL --session @SESSION --url URL \
 #                   --auth "Bearer TOKEN" [--retries N]
+#        mcpc-probe --name LABEL --session @SESSION --command CMD [--retries N]
+# --command connects a local stdio server instead of a remote URL (written as
+# a config-file entry, mcpc's stdio connect format). Used by the notion cells,
+# whose hosted MCP is OAuth-only.
 set -e
 RETRIES=2
 NAME=mcpc
 SESSION=
 URL=
 AUTH=
+COMMAND=
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -19,14 +24,26 @@ while [ $# -gt 0 ]; do
     --session) SESSION="$2"; shift 2;;
     --url)     URL="$2";     shift 2;;
     --auth)    AUTH="$2";    shift 2;;
+    --command) COMMAND="$2"; shift 2;;
     --retries) RETRIES="$2"; shift 2;;
     *) echo "mcpc-probe: unknown arg $1" >&2; exit 2;;
   esac
 done
 
-if [ -z "$SESSION" ] || [ -z "$URL" ] || [ -z "$AUTH" ]; then
-  echo "mcpc-probe: --session, --url, --auth required" >&2
+if [ -z "$SESSION" ] || { [ -z "$COMMAND" ] && { [ -z "$URL" ] || [ -z "$AUTH" ]; }; }; then
+  echo "mcpc-probe: --session plus --url/--auth or --command required" >&2
   exit 2
+fi
+
+if [ -n "$COMMAND" ]; then
+  CFG="/etc/mcpc-$NAME.json"
+  python3 - "$NAME" "$COMMAND" "$CFG" <<'EOF'
+import json, shlex, sys
+name, command, path = sys.argv[1:4]
+argv = shlex.split(command)
+with open(path, "w") as f:
+    json.dump({"mcpServers": {name: {"command": argv[0], "args": argv[1:]}}}, f)
+EOF
 fi
 
 count_tools() {
@@ -36,7 +53,11 @@ except Exception: print(0)'
 }
 
 attempt() {
-  mcpc connect "$URL" "$SESSION" --header "Authorization: $AUTH" >/dev/null 2>&1 || return 1
+  if [ -n "$COMMAND" ]; then
+    mcpc connect "$CFG:$NAME" "$SESSION" >/dev/null 2>&1 || return 1
+  else
+    mcpc connect "$URL" "$SESSION" --header "Authorization: $AUTH" >/dev/null 2>&1 || return 1
+  fi
   n=$(mcpc --json "$SESSION" tools-list 2>/dev/null | count_tools)
   [ "${n:-0}" -ge 1 ] && echo "$n"
 }

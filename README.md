@@ -43,7 +43,7 @@ cover every task (🟡). Keep this in mind when comparing connector results.
 |--------|:---:|:---:|:---:|:----:|:--------:|:-------:|:-------:|:---------:|
 | apify  | ✅  | ✅  | ✅  | ✅   | ✅       | ✅      | -       | ✅        |
 | github | 🟡  | ✅  | ✅  | 🟡   | 🟡       | 🟡      | ✅      | -         |
-| notion | ✅  | ✅  | -   | -    | -        | -       | -       | -         |
+| notion | ✅  | ✅  | ✅  | ✅   | ✅       | ✅      | -       | ✅        |
 
 ## Concepts
 

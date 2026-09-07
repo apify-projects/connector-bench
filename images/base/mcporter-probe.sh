@@ -7,12 +7,16 @@
 #
 # Usage: mcporter-probe --name LABEL --server SERVER --url URL \
 #                       --auth "Bearer TOKEN" [--retries N]
+#        mcporter-probe --name LABEL --server SERVER --command CMD [--retries N]
+# --command registers a local stdio server instead of a remote URL. Used by
+# the notion cells, whose hosted MCP is OAuth-only.
 set -e
 RETRIES=2
 NAME=mcporter
 SERVER=
 URL=
 AUTH=
+COMMAND=
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -20,19 +24,20 @@ while [ $# -gt 0 ]; do
     --server)  SERVER="$2";  shift 2;;
     --url)     URL="$2";     shift 2;;
     --auth)    AUTH="$2";    shift 2;;
+    --command) COMMAND="$2"; shift 2;;
     --retries) RETRIES="$2"; shift 2;;
     *) echo "mcporter-probe: unknown arg $1" >&2; exit 2;;
   esac
 done
 
-if [ -z "$SERVER" ] || [ -z "$URL" ] || [ -z "$AUTH" ]; then
-  echo "mcporter-probe: --server, --url, --auth required" >&2
+if [ -z "$SERVER" ] || { [ -z "$COMMAND" ] && { [ -z "$URL" ] || [ -z "$AUTH" ]; }; }; then
+  echo "mcporter-probe: --server plus --url/--auth or --command required" >&2
   exit 2
 fi
 
-python3 - "$SERVER" "$URL" "$AUTH" <<'EOF'
-import json, os, sys
-server, url, auth = sys.argv[1:4]
+python3 - "$SERVER" "$URL" "$AUTH" "$COMMAND" <<'EOF'
+import json, os, shlex, sys
+server, url, auth, command = sys.argv[1:5]
 path = os.path.expanduser("~/.mcporter/mcporter.json")
 os.makedirs(os.path.dirname(path), exist_ok=True)
 try:
@@ -40,10 +45,12 @@ try:
         cfg = json.load(f)
 except Exception:
     cfg = {}
-cfg.setdefault("mcpServers", {})[server] = {
-    "baseUrl": url,
-    "headers": {"Authorization": auth},
-}
+if command:
+    argv = shlex.split(command)
+    entry = {"command": argv[0], "args": argv[1:]}
+else:
+    entry = {"baseUrl": url, "headers": {"Authorization": auth}}
+cfg.setdefault("mcpServers", {})[server] = entry
 with open(path, "w") as f:
     json.dump(cfg, f, indent=2)
 EOF

@@ -1,0 +1,7 @@
+# See apps/apify/mcpc/cell.yaml. The bridge drives the local stdio server via
+# notion-mcp-proxy (hosted mcp.notion.com is OAuth-only); the token is stashed
+# to /etc/notion-mcp.token like apps/notion/mcp/cell.yaml.
+setup_env:
+  NOTION_API_TOKEN: ${NOTION_API_TOKEN}
+  NOTION_PARENT_PAGE_ID: ${NOTION_PARENT_PAGE_ID}
+  NOTION_FIXTURES_HASH: ${NOTION_FIXTURES_HASH}

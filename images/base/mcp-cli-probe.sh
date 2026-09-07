@@ -8,12 +8,16 @@
 #
 # Usage: mcp-cli-probe --name LABEL --server SERVER --url URL \
 #                      --auth "Bearer TOKEN" [--retries N]
+#        mcp-cli-probe --name LABEL --server SERVER --command CMD [--retries N]
+# --command registers a local stdio server instead of a remote URL. Used by
+# the notion cells, whose hosted MCP is OAuth-only.
 set -e
 RETRIES=2
 NAME=mcp-cli
 SERVER=
 URL=
 AUTH=
+COMMAND=
 CONFIG=/app/server_config.json
 
 while [ $# -gt 0 ]; do
@@ -22,29 +26,32 @@ while [ $# -gt 0 ]; do
     --server)  SERVER="$2";  shift 2;;
     --url)     URL="$2";     shift 2;;
     --auth)    AUTH="$2";    shift 2;;
+    --command) COMMAND="$2"; shift 2;;
     --retries) RETRIES="$2"; shift 2;;
     *) echo "mcp-cli-probe: unknown arg $1" >&2; exit 2;;
   esac
 done
 
-if [ -z "$SERVER" ] || [ -z "$URL" ] || [ -z "$AUTH" ]; then
-  echo "mcp-cli-probe: --server, --url, --auth required" >&2
+if [ -z "$SERVER" ] || { [ -z "$COMMAND" ] && { [ -z "$URL" ] || [ -z "$AUTH" ]; }; }; then
+  echo "mcp-cli-probe: --server plus --url/--auth or --command required" >&2
   exit 2
 fi
 
-python3 - "$SERVER" "$URL" "$AUTH" "$CONFIG" <<'EOF'
-import json, os, sys
-server, url, auth, path = sys.argv[1:5]
+python3 - "$SERVER" "$URL" "$AUTH" "$COMMAND" "$CONFIG" <<'EOF'
+import json, os, shlex, sys
+server, url, auth, command, path = sys.argv[1:6]
 os.makedirs(os.path.dirname(path), exist_ok=True)
 try:
     with open(path) as f:
         cfg = json.load(f)
 except Exception:
     cfg = {}
-cfg.setdefault("mcpServers", {})[server] = {
-    "url": url,
-    "headers": {"Authorization": auth},
-}
+if command:
+    argv = shlex.split(command)
+    entry = {"command": argv[0], "args": argv[1:]}
+else:
+    entry = {"url": url, "headers": {"Authorization": auth}}
+cfg.setdefault("mcpServers", {})[server] = entry
 with open(path, "w") as f:
     json.dump(cfg, f, indent=2)
 EOF
