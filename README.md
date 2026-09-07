@@ -1,4 +1,4 @@
-# connector evals
+# connector bench
 
 ![connector-evals: MCP vs CLI](docs/images/logo.png)
 
