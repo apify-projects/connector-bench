@@ -1,0 +1,10 @@
+# Playwright MCP drives a local headless Chromium; the agent works through
+# github.com's web UI. No auth: the github tasks read public repos.
+# --browser chromium: the bundled download, not the default `chrome` channel
+# (not installed). --no-sandbox: chromium runs as root in the sandbox.
+# --isolated: in-memory profile, no state carried across runs.
+mcp_servers:
+  - name: browser
+    transport: stdio
+    command: /usr/local/bin/playwright-mcp
+    args: ["--browser", "chromium", "--headless", "--no-sandbox", "--isolated"]
