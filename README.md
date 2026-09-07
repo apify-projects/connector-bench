@@ -36,12 +36,13 @@ this project compares:
 - **`browser`** - [playwright-mcp](https://github.com/microsoft/playwright-mcp) driving headless Chromium against the app's web UI, like a human would (github only for now).
 - **`cli+skill`** - the CLI plus an agent skill teaching its usage.
 
-Not every connector exists for every app.
+Not every connector exists for every app, and an existing one may still not
+cover every task (🟡). Keep this in mind when comparing connector results.
 
 | app    | mcp | cli | api | mcpc | mcporter | mcp-cli | browser | cli+skill |
 |--------|:---:|:---:|:---:|:----:|:--------:|:-------:|:-------:|:---------:|
 | apify  | ✅  | ✅  | ✅  | ✅   | ✅       | ✅      | -       | ✅        |
-| github | ✅  | ✅  | ✅  | ✅   | ✅       | ✅      | ✅      | -         |
+| github | 🟡  | ✅  | ✅  | 🟡   | 🟡       | 🟡      | ✅      | -         |
 | notion | ✅  | ✅  | -   | -    | -        | -       | -       | -         |
 
 ## Concepts
