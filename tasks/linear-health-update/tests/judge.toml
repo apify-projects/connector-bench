@@ -1,0 +1,16 @@
+# Single binary verdict from a trajectory judge, same shape as the notion
+# tasks. KNOWN FACTS come from src/connector_evals/linear_fixtures.py FIXTURES;
+# keep in sync when editing fixture content.
+#
+# Judge model must be litellm-mapped because atif-trajectory triggers
+# get_model_info to size the trajectory token budget; deepseek-v4-* are NOT
+# mapped yet, so use the newest mapped deepseek (v3.2).
+[judge]
+judge = "openrouter/deepseek/deepseek-v3.2"
+atif-trajectory = "/logs/agent/trajectory.json"
+mode = "individual"
+
+[[criterion]]
+name = "task_complete"
+description = """KNOWN FACTS: the most recent status update of the project 'Crawler v2 Launch' reports health 'Off track', with the reason that the proxy vendor contract is still unsigned (putting the staged rollout at risk). An older update reports 'On track' and must NOT be mistaken for the latest.\n\nGrade PASS only if the agent actually executed Linear tool calls / commands to read the project's status updates AND reported off-track health AND gave the unsigned vendor contract as the reason. Grade FAIL if it reported the older on-track update, hallucinated a reason, or answered without querying Linear."""
+type = "binary"

@@ -309,7 +309,10 @@ def _name(tc: dict) -> str:
 
 def _command(tc: dict) -> str:
     args = tc.get("arguments") or {}
-    return ((args.get("command") or args.get("cmd")) or "").lstrip()
+    cmd = ((args.get("command") or args.get("cmd")) or "").lstrip()
+    # Agents often prefix with `cd /app && ` (the mcp-cli instruction says to
+    # run from /app); strip it so the connector prefix check still matches.
+    return re.sub(r"^(?:cd\s+\S+\s*&&\s*)+", "", cmd)
 
 
 def _normalize_mcp_tool(name: str, app: str) -> str:

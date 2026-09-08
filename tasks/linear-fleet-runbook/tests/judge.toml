@@ -1,0 +1,16 @@
+# Single binary verdict from a trajectory judge, same shape as the notion
+# tasks. KNOWN FACTS come from src/connector_evals/linear_fixtures.py FIXTURES;
+# keep in sync when editing fixture content.
+#
+# Judge model must be litellm-mapped because atif-trajectory triggers
+# get_model_info to size the trajectory token budget; deepseek-v4-* are NOT
+# mapped yet, so use the newest mapped deepseek (v3.2).
+[judge]
+judge = "openrouter/deepseek/deepseek-v3.2"
+atif-trajectory = "/logs/agent/trajectory.json"
+mode = "individual"
+
+[[criterion]]
+name = "task_complete"
+description = """KNOWN FACTS: the Linear document 'Fleet Runbook' (attached to the 'Crawler v2 Launch' project) states that proxy credential rotation runs automatically every 6 hours, and that setting the environment variable FLEET_HALT=1 halts the whole fleet.\n\nGrade PASS only if the agent actually executed Linear tool calls / commands to read the document AND reported both the 6-hour rotation cadence AND the FLEET_HALT variable (value 1 or 'set to 1'). Grade FAIL if it hallucinated either fact or answered without reading the document."""
+type = "binary"

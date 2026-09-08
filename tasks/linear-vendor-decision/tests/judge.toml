@@ -1,0 +1,16 @@
+# Single binary verdict from a trajectory judge, same shape as the notion
+# tasks. KNOWN FACTS come from src/connector_evals/linear_fixtures.py FIXTURES;
+# keep in sync when editing fixture content.
+#
+# Judge model must be litellm-mapped because atif-trajectory triggers
+# get_model_info to size the trajectory token budget; deepseek-v4-* are NOT
+# mapped yet, so use the newest mapped deepseek (v3.2).
+[judge]
+judge = "openrouter/deepseek/deepseek-v3.2"
+atif-trajectory = "/logs/agent/trajectory.json"
+mode = "individual"
+
+[[criterion]]
+name = "task_complete"
+description = """KNOWN FACTS: the comment thread on 'Choose proxy vendor for the fleet' considers three vendors: HydraNet ($1.90/GB, dropped after failing geo-coverage), GridRelay ($4.10/GB, tentatively proposed then rejected by finance), and NimbusProxy. The final decision, in the last comment, is NimbusProxy at $2.40/GB.\n\nGrade PASS only if the agent actually executed Linear tool calls / commands to read the issue's comments AND reported NimbusProxy at $2.40/GB as the final choice. Grade FAIL if it reported HydraNet or GridRelay (earlier candidates), a wrong price, or answered without reading the thread."""
+type = "binary"

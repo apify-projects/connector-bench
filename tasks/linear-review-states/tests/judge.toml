@@ -1,0 +1,16 @@
+# Single binary verdict from a trajectory judge, same shape as the notion
+# tasks. KNOWN FACTS come from src/connector_evals/linear_fixtures.py FIXTURES;
+# keep in sync when editing fixture content.
+#
+# Judge model must be litellm-mapped because atif-trajectory triggers
+# get_model_info to size the trajectory token budget; deepseek-v4-* are NOT
+# mapped yet, so use the newest mapped deepseek (v3.2).
+[judge]
+judge = "openrouter/deepseek/deepseek-v3.2"
+atif-trajectory = "/logs/agent/trajectory.json"
+mode = "individual"
+
+[[criterion]]
+name = "task_complete"
+description = """KNOWN FACTS: the team 'Scraper Fleet' has exactly two workflow states of type 'started': 'In Progress' and 'In Review'. 'In Review' is a custom state, so an agent answering from Linear defaults without querying would miss it.\n\nGrade PASS only if the agent actually executed Linear tool calls / commands to read the team's workflow states AND named exactly 'In Progress' and 'In Review'. Grade FAIL if it named only 'In Progress', included states of other types (Todo, Backlog, Done, ...), or answered without querying Linear."""
+type = "binary"

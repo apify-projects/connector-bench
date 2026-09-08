@@ -1,0 +1,16 @@
+# Single binary verdict from a trajectory judge, same shape as the notion
+# tasks. KNOWN FACTS come from src/connector_evals/linear_fixtures.py FIXTURES;
+# keep in sync when editing fixture content.
+#
+# Judge model must be litellm-mapped because atif-trajectory triggers
+# get_model_info to size the trajectory token budget; deepseek-v4-* are NOT
+# mapped yet, so use the newest mapped deepseek (v3.2).
+[judge]
+judge = "openrouter/deepseek/deepseek-v3.2"
+atif-trajectory = "/logs/agent/trajectory.json"
+mode = "individual"
+
+[[criterion]]
+name = "task_complete"
+description = """KNOWN FACTS: the issue 'Ship crawler v2' has blocked-by relations to exactly 3 issues: 'Sign proxy vendor contract' (state In Progress), 'Load-test proxy failover' (state Todo), and 'Update scraper base image for v2' (state Done). Only the first two are still blocking; the Done one must be excluded.\n\nGrade PASS only if the agent actually executed Linear tool calls / commands to read the issue's relations AND named both 'Sign proxy vendor contract' and 'Load-test proxy failover' as still blocking with correct (or equivalent) states AND did not list 'Update scraper base image for v2' as still blocking. Grade FAIL if it hallucinated relations, guessed from issue titles without reading relations, or included the completed blocker."""
+type = "binary"
