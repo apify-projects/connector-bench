@@ -1,0 +1,1 @@
+In the Linear team "Scraper Fleet", look at the issues labeled "bug" that are not completed or canceled. Report: (1) how many such issues there are, and (2) the titles of the ones with urgent priority.

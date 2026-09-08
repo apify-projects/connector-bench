@@ -230,6 +230,12 @@ def run_command(
 
         os.environ["NOTION_FIXTURES_HASH"] = fixtures_hash()
 
+    if any(c.app == "linear" for c in cells):
+        # Same contract as notion above, keyed on the linear fixture data.
+        from connector_evals.linear_fixtures import fixtures_hash as linear_hash
+
+        os.environ["LINEAR_FIXTURES_HASH"] = linear_hash()
+
     materialize_for_tasks(run_task_paths(run))
 
     job_config = build_job_config(run, cells)

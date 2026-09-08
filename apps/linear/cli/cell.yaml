@@ -1,0 +1,9 @@
+# `linear auth login` persists to the system keyring (needs libsecret on
+# linux), so like notion the key stays in the agent env: the linear CLI reads
+# LINEAR_API_KEY directly. Direct api.linear.app escapes are still caught by
+# the verifier's connector classification.
+environment_env:
+  LINEAR_API_KEY: ${LINEAR_API_KEY}
+setup_env:
+  LINEAR_API_KEY: ${LINEAR_API_KEY}
+  LINEAR_FIXTURES_HASH: ${LINEAR_FIXTURES_HASH}

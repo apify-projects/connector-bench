@@ -1,0 +1,5 @@
+# See apps/apify/mcp-cli/cell.yaml and apps/linear/mcpc/cell.yaml (remote
+# URL form, key written into /app/server_config.json by the probe).
+setup_env:
+  LINEAR_API_KEY: ${LINEAR_API_KEY}
+  LINEAR_FIXTURES_HASH: ${LINEAR_FIXTURES_HASH}

@@ -1,0 +1,6 @@
+# See apps/apify/mcpc/cell.yaml. Linear's hosted MCP accepts the API key as a
+# bearer token, so the bridge connects to the remote URL directly (no local
+# stdio proxy like notion).
+setup_env:
+  LINEAR_API_KEY: ${LINEAR_API_KEY}
+  LINEAR_FIXTURES_HASH: ${LINEAR_FIXTURES_HASH}

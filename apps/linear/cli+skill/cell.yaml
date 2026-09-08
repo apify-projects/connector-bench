@@ -1,0 +1,9 @@
+# See apps/linear/cli/cell.yaml (same CLI underneath, plus the skill).
+# skills/linear-cli is the CLI's own skill, vendored verbatim (ISC) from
+# github.com/schpet/linear-cli @ v2.6.0 (1963153, 2026-09-02); SKILL.template.md
+# and scripts/ (doc generators) are omitted.
+environment_env:
+  LINEAR_API_KEY: ${LINEAR_API_KEY}
+setup_env:
+  LINEAR_API_KEY: ${LINEAR_API_KEY}
+  LINEAR_FIXTURES_HASH: ${LINEAR_FIXTURES_HASH}

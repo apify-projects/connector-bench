@@ -1,0 +1,16 @@
+# Single binary verdict from a trajectory judge, same shape as the notion
+# tasks. KNOWN FACTS come from src/connector_evals/linear_fixtures.py FIXTURES;
+# keep in sync when editing fixture content.
+#
+# Judge model must be litellm-mapped because atif-trajectory triggers
+# get_model_info to size the trajectory token budget; deepseek-v4-* are NOT
+# mapped yet, so use the newest mapped deepseek (v3.2).
+[judge]
+judge = "openrouter/deepseek/deepseek-v3.2"
+atif-trajectory = "/logs/agent/trajectory.json"
+mode = "individual"
+
+[[criterion]]
+name = "task_complete"
+description = """KNOWN FACTS: the Linear team 'Scraper Fleet' has exactly 4 issues labeled 'bug' that are not completed or canceled (a fifth bug issue is Done and a sixth is Canceled - those must be excluded). Two of the 4 have urgent priority: 'amazon-crawler hits captcha wall on product pages' and 'google-maps-scraper returns stale opening hours'.\n\nGrade PASS only if the agent actually executed Linear tool calls / commands to obtain the data AND reported 4 as the count AND named both urgent issues. Grade FAIL if it hallucinated data without querying Linear, counted the Done/Canceled bugs in, misread the results, or gave a partial answer."""
+type = "binary"

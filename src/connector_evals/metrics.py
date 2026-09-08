@@ -72,6 +72,34 @@ APPS: dict[str, dict[str, Any]] = {
         "cli_prefixes": ("gh ",),
         "api_hosts": ("api.github.com",),
     },
+    "linear": {
+        "mcp_name_prefixes": ("linear_", "linear-", "mcp__linear__"),
+        # codex-style stripped names (hosted mcp.linear.app, read surface).
+        # Extend when surfacing new tools - mirrored in tasks/linear-*/tests/check.py.
+        "mcp_tools": {
+            "list-issues",
+            "get-issue",
+            "list-teams",
+            "get-team",
+            "list-projects",
+            "get-project",
+            "list-cycles",
+            "list-comments",
+            "list-issue-labels",
+            "list-issue-statuses",
+            "get-issue-status",
+            "list-users",
+            "get-user",
+            "get-workspace",
+            "list-documents",
+            "get-document",
+            "list-milestones",
+            "get-milestone",
+            "search-documentation",
+        },
+        "cli_prefixes": ("linear ",),
+        "api_hosts": ("api.linear.app",),
+    },
     "notion": {
         "mcp_name_prefixes": ("notion_", "notion-", "mcp__notion__"),
         # codex-style stripped names (@notionhq/notion-mcp-server 2.x). Extend

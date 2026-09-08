@@ -66,6 +66,8 @@ Materialize now uses **one shared base image** (`images/base/Dockerfile`) with e
 
 E2B concurrency is not a constraint: a 17-trial gh sweep with `-n 17` finished in ~6:39 with zero sandbox / quota / 429 errors. Crank `-n` up to dataset size; the bottleneck is upstream API rate limits (GitHub, Apify) or model provider QPS, not the sandbox layer.
 
+Linear rate limits: 2,500 requests/h and 3M GraphQL complexity points/h per API key (10k points max per query). All parallel trials share the one `LINEAR_API_KEY`, so budget (probes + agent calls + verifier) x trials under that when sizing linear sweeps.
+
 **Template pre-warm.** Same-task trials racing a first-time e2b build cross-cancel each other (`BuildException` / `SandboxException 404`). Pre-warm once with `configs/all-opencode-deepseek-mcp-prewarm.yaml` before parallel sweeps; re-warm when adding a task or editing `images/base/Dockerfile`.
 
 ## Models

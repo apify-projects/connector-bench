@@ -43,6 +43,7 @@ cover every task (🟡). Keep this in mind when comparing connector results.
 |--------|:---:|:---:|:---:|:----:|:--------:|:-------:|:-------:|:---------:|
 | apify  | ✅  | ✅  | ✅  | ✅   | ✅       | ✅      | -       | ✅        |
 | github | 🟡  | ✅  | ✅  | 🟡   | 🟡       | 🟡      | ✅      | -         |
+| linear | ✅  | ✅  | ✅  | ✅   | ✅       | ✅      | -       | ✅        |
 | notion | ✅  | ✅  | ✅  | ✅   | ✅       | ✅      | -       | ✅        |
 
 ## Concepts
@@ -115,6 +116,13 @@ share it with the integration, set `NOTION_API_TOKEN` and
 `NOTION_PARENT_PAGE_ID` in `.env`, then seed once with
 `uv run connector-evals seed notion` (idempotent; rerun after fixture edits -
 trials fail fast with a reseed hint when the workspace is stale).
+
+For linear tasks (same fixture model - Linear workspaces are private): create a
+dedicated eval workspace, make a personal API key at
+https://linear.app/settings/account/security, set `LINEAR_API_KEY` in `.env`,
+then seed once with `uv run connector-evals seed linear` (idempotent; adopts
+the workspace's sole team by renaming it to "Scraper Fleet", deleting and
+recreating that team's issues on reseed - hence the dedicated workspace).
 
 ## Usage
 
