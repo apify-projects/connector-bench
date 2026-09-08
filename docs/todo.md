@@ -148,3 +148,15 @@ Fix: add an e2b build lock mirroring `apple_container`, or pre-warm the template
 Run integration jobs for the same task **serially** (one config at a time, don't launch the matrix configs concurrently). Race A vanishes (distinct Dockerfile content → distinct alias → correct image each time); Race B is reduced to the cold-build-within-one-job case, mitigated by `-n 1` or rerunning `BuildException` trials solo.
 
 The "do not run same-task integrations in parallel" warnings in `README.md` (Known limitations) and `AGENTS.md` (Configs section) document this stopgap. **Once race A is fixed, remove both warnings** (and drop this stopgap subsection).
+
+## Notion task backlog
+
+Deferred single-app read-only ideas (fixtures in `src/connector_evals/notion_fixtures.py`, judges assert fixture facts):
+
+- **Seeded comment**: seeder posts a comment on a fixture page contradicting its content; agent must surface it via `retrieve-comments`. One extra `POST /v1/comments` in the seeder; most cli/skill paths never expose comments.
+- **Page-DB join**: "total rows scraped by deprecated scrapers" - joins the Scraper Inventory page with the Scraper Runs database.
+- **Cross-note references (PKM)**: notes mentioning each other via real page mentions; needs a two-pass seeder (page IDs known only after create) and brute-force reading (API has no backlink endpoint).
+
+Three-app chains (from the retired notion-connector-plan.md): `notion-doc-to-actor-id` (Notion -> Apify -> GitHub: fixture page names an actor, agent fetches actor meta, then repo HEAD SHA), `notion-tracked-library-release`, `github-issue-to-notion-runbook`.
+
+Durable rationale worth remembering: no `browser` cell for notion (web UI is interactive-login only, no unauthenticated surface); notion was added before linear because its official CLI (`ntn`) makes cli-vs-mcp apples-to-apples.
