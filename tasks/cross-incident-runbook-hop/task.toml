@@ -1,0 +1,19 @@
+version = "1.0"
+
+[task]
+name = "connector-evals/cross-incident-runbook-hop"
+description = "Follow the Notion incident-response process into Linear: the security needle issue + the fleet halt env var."
+
+[metadata]
+difficulty = "medium"
+category = "cross-app"
+tags = ["read-only", "notion", "linear"]
+
+[connector_evals]
+apps = ["notion", "linear"]
+
+[verifier]
+timeout_sec = 60.0
+
+[agent]
+timeout_sec = 300.0

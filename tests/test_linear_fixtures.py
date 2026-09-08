@@ -98,6 +98,15 @@ def test_fleet_runbook():  # linear-fleet-runbook
     assert "FLEET_HALT=1" in doc["content"]
 
 
+def test_upstream_pr_reference():  # cross-issue-upstream-pr
+    refs = [i for i in FIXTURES["issues"] if "github.com" in i["description"]]
+    assert [i["title"] for i in refs] == ["Verify upstream fix for gateway escaping"]
+    assert "openclaw/openclaw/pull/50782" in refs[0]["description"]
+    # Must not disturb the bug-triage or backlog-count facts.
+    assert "bug" not in refs[0]["labels"]
+    assert refs[0]["state"] != "Backlog"
+
+
 def test_new_issues_never_use_bug_label():
     # linear-bug-triage facts depend on exactly the original bug set; any new
     # fixture issue must pick a different label.

@@ -76,6 +76,10 @@ _NEEDLE = {
 # - started-type states: In Progress + In Review (linear-review-states).
 # - Fleet Runbook: rotation every 6 hours, halt via FLEET_HALT=1
 #   (linear-fleet-runbook).
+# - 'Verify upstream fix for gateway escaping' is the only issue referencing a
+#   GitHub PR (cross-issue-upstream-pr).
+# - Exactly one 'security'-labeled issue, reachable from the Notion Incident
+#   Response page (cross-incident-runbook-hop).
 FIXTURES: dict = {
     # Not "Scraper Ops"/"SCR": that name+key sits in the workspace's trash
     # (a teamCreate half-succeeded before free-plan limit enforcement) and
@@ -211,6 +215,16 @@ FIXTURES: dict = {
             "state": "Backlog",
             "priority": 4,
             "labels": ["enhancement"],
+        },
+        {
+            "title": "Verify upstream fix for gateway escaping",
+            "description": "Upstream fix shipped in openclaw/openclaw PR #50782 "
+            "(https://github.com/openclaw/openclaw/pull/50782). Confirm the PR is "
+            "merged and note its author, then pick up the fix in our gateway "
+            "config.",
+            "state": "Todo",
+            "priority": 3,
+            "labels": ["infra"],
         },
         # --- Crawler v2 Launch project ---
         {

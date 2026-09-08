@@ -1,0 +1,18 @@
+# Single binary verdict from a trajectory judge, same shape as the github /
+# linear / notion tasks. KNOWN FACTS come from src/connector_evals/
+# linear_fixtures.py + notion_fixtures.py FIXTURES plus pinned public data
+# (openclaw/openclaw PR #50863 is merged; apify/website-content-crawler
+# pricing); keep in sync when editing fixture content.
+#
+# Judge model must be litellm-mapped because atif-trajectory triggers
+# get_model_info to size the trajectory token budget; deepseek-v4-* are NOT
+# mapped yet, so use the newest mapped deepseek (v3.2).
+[judge]
+judge = "openrouter/deepseek/deepseek-v3.2"
+atif-trajectory = "/logs/agent/trajectory.json"
+mode = "individual"
+
+[[criterion]]
+name = "task_complete"
+description = """KNOWN FACTS: (1) The Linear team 'Scraper Fleet' has exactly 4 open (not completed or canceled) bug-labeled issues; the 2 urgent ones are 'amazon-crawler hits captcha wall on product pages' and 'google-maps-scraper returns stale opening hours'. (2) The Notion 'Scraper Runs' database has exactly two failed runs in August 2026: run-007 (amazon-crawler, 2026-08-14) and run-011 (news-harvester, 2026-08-27); failed runs in July and September exist as distractors and must not be listed. (3) openclaw/openclaw pull request #50863 is titled "fix: standardize 'MS Teams' to 'Microsoft Teams' across docs" and is merged. (4) The apify/website-content-crawler Actor's pricing model is FREE (a free Actor; users pay platform usage only).\n\nGrade PASS only if the agent actually executed tool calls / commands against all four services to obtain the data AND reported all four sections correctly: 4 open bugs with both urgent titles, exactly the two August failed runs with their scrapers, the PR's title and merged status, and the free pricing model. Grade FAIL if any section is hallucinated without tool calls, missing, or wrong."""
+type = "binary"

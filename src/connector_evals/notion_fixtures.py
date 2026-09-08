@@ -68,7 +68,7 @@ FIXTURES: dict = {
                 "Inventory of the scrapers our team runs.",
                 "- google-maps-scraper | owner: Alice | status: active",
                 "- amazon-crawler | owner: Bob | status: deprecated",
-                "- news-harvester | owner: Carol | status: active",
+                "- news-harvester | owner: Carol | status: active | built on Apify Store Actor: apify/rag-web-browser",
                 "- jobs-radar | owner: Dana | status: deprecated",
                 "- forum-archiver | owner: Alice | status: active",
             ],
@@ -101,7 +101,11 @@ FIXTURES: dict = {
                 },
                 {
                     "title": "Incident Response",
-                    "blocks": ["- Page the on-call first, write the timeline doc second"],
+                    "blocks": [
+                        "- Page the on-call first, write the timeline doc second",
+                        "- Credential leak: run the audit tracked by the security-labeled issue in the scraper fleet tracker (Linear)",
+                        "- If leaked tokens are confirmed, halt the fleet per the Fleet Runbook (Linear project document)",
+                    ],
                 },
             ],
         },

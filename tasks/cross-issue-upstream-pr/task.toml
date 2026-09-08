@@ -1,0 +1,19 @@
+version = "1.0"
+
+[task]
+name = "connector-evals/cross-issue-upstream-pr"
+description = "Find the Linear issue referencing an upstream GitHub PR, follow it, report the PR's title/author/merge state as JSON."
+
+[metadata]
+difficulty = "medium"
+category = "cross-app"
+tags = ["read-only", "linear", "github"]
+
+[connector_evals]
+apps = ["linear", "github"]
+
+[verifier]
+timeout_sec = 60.0
+
+[agent]
+timeout_sec = 300.0

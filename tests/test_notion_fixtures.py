@@ -28,6 +28,20 @@ def test_scraper_inventory():  # notion-scraper-inventory
     assert any("jobs-radar" in b and "Dana" in b for b in deprecated)
 
 
+def test_inventory_actor_reference():  # cross-inventory-actor-audit
+    bullets = [b for b in _page("Scraper Inventory")["blocks"] if b.startswith("- ")]
+    refs = [b for b in bullets if "Apify Store Actor" in b]
+    assert len(refs) == 1
+    assert "news-harvester" in refs[0] and "apify/rag-web-browser" in refs[0]
+
+
+def test_incident_response_hop():  # cross-incident-runbook-hop
+    wiki = _page("Engineering Wiki")
+    incident = next(c for c in wiki["children"] if c["title"] == "Incident Response")
+    assert any("security-labeled issue" in b and "Linear" in b for b in incident["blocks"])
+    assert any("Fleet Runbook" in b for b in incident["blocks"])
+
+
 def test_blocklist_needle():  # notion-blocklist-needle
     blocks = _page("Domain Blocklist")["blocks"]
     domains = [b[2:] for b in blocks if b.startswith("- ")]
