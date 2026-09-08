@@ -1,6 +1,6 @@
 # connector bench
 
-![connector-evals: MCP vs CLI](docs/images/logo.png)
+![connector-bench: MCP vs CLI](docs/images/logo.png)
 
 Evaluate the tools you give to AI agents. Real agents (claude-code, codex,
 opencode) run verifiable tasks through your MCP server, CLI, or skill, and you
@@ -57,7 +57,7 @@ https://www.harborframework.com/docs/core-concepts):
 - **trial** - one (task, agent, model) execution; produces a reward.
 - **job** - a collection of trials, run in parallel.
 
-`connector-evals` adds three project-specific pieces on top:
+`connector-bench` adds three project-specific pieces on top:
 
 - **app** - third-party service the agent talks to (`apify`, `github`, `linear`, `notion`, ...).
 - **connector** - how the agent reaches it; see [Connectors](#connectors). One connector per run by default; `app_connectors:` for hybrid.
@@ -83,18 +83,18 @@ verifier env contract, step-by-step for wiring a new app):
 ## Installation
 
 ```bash
-uv tool install git+https://github.com/apify-projects/connector-evals
+uv tool install git+https://github.com/apify-projects/connector-bench
 ```
 
 From a local fork/checkout instead (changes in the checkout apply immediately,
 no reinstall):
 
 ```bash
-uv tool install --editable /path/to/connector-evals
+uv tool install --editable /path/to/connector-bench
 ```
 
 To use it as a library (`from connector_evals import ...`) add it as a project
-dependency instead: `uv add git+https://github.com/apify-projects/connector-evals`, then
+dependency instead: `uv add git+https://github.com/apify-projects/connector-bench`, then
 invoke the CLI via `uv run connector-evals`.
 
 ## Prerequisites

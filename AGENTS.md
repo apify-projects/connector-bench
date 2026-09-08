@@ -1,4 +1,4 @@
-# connector-evals
+# connector-bench
 
 ## Goal
 
