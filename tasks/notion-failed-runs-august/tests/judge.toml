@@ -1,0 +1,16 @@
+# Single binary verdict from a trajectory judge, same shape as the github
+# tasks. KNOWN FACTS come from src/connector_evals/notion_fixtures.py FIXTURES;
+# keep in sync when editing fixture content.
+#
+# Judge model must be litellm-mapped because atif-trajectory triggers
+# get_model_info to size the trajectory token budget; deepseek-v4-* are NOT
+# mapped yet, so use the newest mapped deepseek (v3.2).
+[judge]
+judge = "openrouter/deepseek/deepseek-v3.2"
+atif-trajectory = "/logs/agent/trajectory.json"
+mode = "individual"
+
+[[criterion]]
+name = "task_complete"
+description = """KNOWN FACTS: in the "Scraper Runs" Notion database exactly two runs failed in August 2026: run-007 (amazon-crawler, 2026-08-14) and run-011 (news-harvester, 2026-08-27). Failed runs also exist in July (run-003, jobs-radar) and September (run-015, amazon-crawler) but must NOT be included.\n\nGrade PASS only if the agent actually executed Notion tool calls / commands to query the database AND reported exactly run-007 (amazon-crawler) and run-011 (news-harvester), no more, no less. Grade FAIL if it included out-of-August failures, missed one, or hallucinated."""
+type = "binary"

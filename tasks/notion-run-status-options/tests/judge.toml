@@ -1,0 +1,16 @@
+# Single binary verdict from a trajectory judge, same shape as the github
+# tasks. KNOWN FACTS come from src/connector_evals/notion_fixtures.py FIXTURES;
+# keep in sync when editing fixture content.
+#
+# Judge model must be litellm-mapped because atif-trajectory triggers
+# get_model_info to size the trajectory token budget; deepseek-v4-* are NOT
+# mapped yet, so use the newest mapped deepseek (v3.2).
+[judge]
+judge = "openrouter/deepseek/deepseek-v3.2"
+atif-trajectory = "/logs/agent/trajectory.json"
+mode = "individual"
+
+[[criterion]]
+name = "task_complete"
+description = """KNOWN FACTS: the Status select property of the "Scraper Runs" Notion database defines exactly three options: success, failed, cancelled. No row uses cancelled, so it is only visible in the database/data-source schema, not in the rows.\n\nGrade PASS only if the agent actually executed Notion tool calls / commands to inspect the database AND reported all three options including cancelled. Grade FAIL if it listed only success and failed (inferred from rows), added invented options, or answered without reading the database."""
+type = "binary"

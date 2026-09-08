@@ -1,0 +1,16 @@
+# Single binary verdict from a trajectory judge, same shape as the github
+# tasks. KNOWN FACTS come from src/connector_evals/notion_fixtures.py FIXTURES;
+# keep in sync when editing fixture content.
+#
+# Judge model must be litellm-mapped because atif-trajectory triggers
+# get_model_info to size the trajectory token budget; deepseek-v4-* are NOT
+# mapped yet, so use the newest mapped deepseek (v3.2).
+[judge]
+judge = "openrouter/deepseek/deepseek-v3.2"
+atif-trajectory = "/logs/agent/trajectory.json"
+mode = "individual"
+
+[[criterion]]
+name = "task_complete"
+description = """KNOWN FACTS: the Notion wiki hierarchy is Engineering Wiki > Runbooks > Postgres Runbook. That leaf page states staging Postgres listens on port 6543 (via pgbouncer) and nightly backups run at 03:30 UTC.\n\nGrade PASS only if the agent actually executed Notion tool calls / commands to obtain the data AND reported port 6543 AND backups at 03:30 UTC. Grade FAIL if it hallucinated data without reading the wiki, gave wrong values, or answered only one of the two questions."""
+type = "binary"

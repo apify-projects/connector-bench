@@ -1,0 +1,26 @@
+version = "1.0"
+
+[task]
+name = "connector-evals/notion-run-status-options"
+description = "Report all Status select options of the seeded 'Scraper Runs' database, including the one no row uses. LLM trajectory judge."
+
+[metadata]
+difficulty = "easy"
+category = "single_step"
+tags = ["read-only", "database", "schema"]
+
+[connector_evals]
+apps = ["notion"]
+
+[verifier]
+timeout_sec = 300.0
+
+[agent]
+timeout_sec = 300.0
+
+[verifier.env]
+OPENROUTER_API_KEY = "${OPENROUTER_API_KEY}"
+# Rewardkit always sends `reasoning_effort` to the judge; DeepSeek models on
+# OpenRouter expose `reasoning` (not `reasoning_effort`), so litellm raises
+# UnsupportedParamsError. Drop unsupported params instead of erroring.
+LITELLM_DROP_PARAMS = "True"

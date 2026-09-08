@@ -1,0 +1,16 @@
+# Single binary verdict from a trajectory judge, same shape as the github
+# tasks. KNOWN FACTS come from src/connector_evals/notion_fixtures.py FIXTURES;
+# keep in sync when editing fixture content.
+#
+# Judge model must be litellm-mapped because atif-trajectory triggers
+# get_model_info to size the trajectory token budget; deepseek-v4-* are NOT
+# mapped yet, so use the newest mapped deepseek (v3.2).
+[judge]
+judge = "openrouter/deepseek/deepseek-v3.2"
+atif-trajectory = "/logs/agent/trajectory.json"
+mode = "individual"
+
+[[criterion]]
+name = "task_complete"
+description = """KNOWN FACTS: four Team Sync pages exist (2026-08-11, 2026-08-18, 2026-08-25, 2026-09-01). $39/month was only tentative and was rejected by finance; the price was agreed at $35/month in the 2026-08-25 sync and confirmed on 2026-09-01 (effective October 1).\n\nGrade PASS only if the agent actually executed Notion tool calls / commands to read the notes AND reported the current price as $35/month AND dated the decision to the 2026-08-25 sync (mentioning the 2026-09-01 confirmation instead is also acceptable). Grade FAIL if it reported $39 or $29 as current, invented dates, or answered without reading the pages."""
+type = "binary"
